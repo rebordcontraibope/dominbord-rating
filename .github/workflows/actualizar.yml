@@ -2,10 +2,12 @@ name: Actualizar rating
 
 on:
   schedule:
-    # Lunes 11:00 Argentina (14:00 UTC): ya suele estar la planilla de television.com.ar
-    - cron: "0 14 * * 1"
-    # Lunes 20:00 Argentina (23:00 UTC): el post de X suele salir a la tarde; completa o confirma
-    - cron: "0 23 * * 1"
+    # Hora Argentina = UTC-3. El script es idempotente: si no hay nada nuevo no escribe ni commitea.
+    - cron: "0 13 * * 1"   # lunes 10:00  primera chance: television.com.ar suele publicar a la mañana
+    - cron: "0 16 * * 1"   # lunes 13:00  por si la planilla salió tarde
+    - cron: "0 20 * * 1"   # lunes 17:00  ya suele estar el blog de Ponele Show (~16:00)
+    - cron: "0 23 * * 1"   # lunes 20:00  posts de X de la tarde; completa o confirma
+    - cron: "0 14 * * 2"   # martes 11:00 red de seguridad para lo que quedó provisorio
   workflow_dispatch:
     inputs:
       fecha:
@@ -34,7 +36,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Correr scraper (television.com.ar + X)
+      - name: Correr scraper (todas las fuentes de FUENTES)
         env:
           FECHA: ${{ github.event.inputs.fecha }}
           X_POST: ${{ github.event.inputs.x_post }}
