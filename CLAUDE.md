@@ -36,13 +36,15 @@ No hay tests ni linter.
 
 **Lógica de estados en `index.html`:** todo se calcula en el cliente a partir de `config.estreno` + semanas transcurridas, siempre en hora Argentina. Tres estados: cuenta regresiva (antes del estreno), al aire / esperando dato (sin emisión cargada para la última fecha programada) y con dato. `?demo=1` y `?estado=` solo pisan `now` y `E` para forzar estos estados.
 
-**Scraper, tres fuentes en orden de prioridad:** manual (`--rating/--comp`) > X vía `api.fxtwitter.com` (`--x-post`) o timeline de syndication (`--x-auto`, suele dar 429) > planilla de television.com.ar (`buscar_nota` + `parsear_planilla` sobre texto plano, no sobre markup). Los nombres de canal se normalizan con `ALIAS`/`canal_norm`; los hashtags de X con `hashtag_norm` (sin acentos, espacios ni mayúsculas). El parser de television.com.ar nunca se probó contra el sitio real.
+**Scraper, fuentes combinadas (`combinar`):** manual (`--rating/--comp`) > television.com.ar (`obtener_television`, planilla en texto plano) > Poneleshow (`obtener_poneleshow`) > X (`obtener_x`: `--x-post` vía api.fxtwitter.com, o timeline de syndication que casi siempre da 429). Cada emisión guarda `fuentes[]`; si la única fuente es X queda `provisorio`. Los nombres de canal se normalizan con `ALIAS`/`canal_norm`; los programas se matchean por inclusión normalizada (sin acentos), así "Hay música siempre" matchea "Hay Música". Probado el 2026-11-06 contra el sitio real: television.com.ar no encontró la planilla, Poneleshow devolvió el top completo de cada canal de aire, X dio 429. Antes del estreno el script termina con exit 1 ("ninguna fuente tiene Dominbord"); es lo esperado.
+
+**Workflow:** `workflow_dispatch` acepta `fecha`, `x_post`, `youtube` y `solo_probar` (dry-run, no commitea). Probarlo con `gh workflow run actualizar.yml -f fecha=YYYY-MM-DD -f solo_probar=true` y leer el log con `gh run view <id> --log`.
 
 ## Convenciones
 
 - Todo en español (código, comentarios, README, mensajes del script). Mantenerlo así.
 - Nombres de canal tal como los escribe television.com.ar: `Telefe`, `eltrece`, `América`, `elnueve`, `TV Pública`.
-- `.github/workflows/actualizar.yml` corre el scraper los lunes 14:00 UTC y commitea `data/emisiones.js` si cambió. `Claude outputs/actualizar.yml` es una copia idéntica y no se usa.
+- `.github/workflows/actualizar.yml` corre el scraper los lunes 14:00 UTC y commitea `data/emisiones.js` si cambió. La carpeta `Claude outputs/` está en `.gitignore`.
 
 ## Git y deploy
 
