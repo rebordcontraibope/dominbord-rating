@@ -18,7 +18,8 @@ python3 -m http.server 8080        # → http://localhost:8080
 #   ?estado=pendiente  → simula "Esperando a IBOPE"
 
 # Cargar rating de una emisión (Python 3.10+, solo stdlib). Siempre probar primero con --dry-run
-python3 scripts/actualizar_rating.py --dry-run                       # scrapea television.com.ar, último domingo
+python3 scripts/actualizar_rating.py --dry-run                       # todas las fuentes, último domingo
+python3 scripts/actualizar_rating.py --listar-fuentes
 python3 scripts/actualizar_rating.py --fecha 2026-11-15 --x-post https://x.com/ismael_mon129/status/XXXX
 python3 scripts/actualizar_rating.py --fecha 2026-11-15 --rating 4.2 --comp "Telefe=7.9" --comp "eltrece=3.1"
 ```
@@ -36,9 +37,9 @@ No hay tests ni linter.
 
 **Lógica de estados en `index.html`:** todo se calcula en el cliente a partir de `config.estreno` + semanas transcurridas, siempre en hora Argentina. Tres estados: cuenta regresiva (antes del estreno), al aire / esperando dato (sin emisión cargada para la última fecha programada) y con dato. `?demo=1` y `?estado=` solo pisan `now` y `E` para forzar estos estados.
 
-**Scraper, fuentes combinadas (`combinar`):** manual (`--rating/--comp`) > television.com.ar (`obtener_television`, planilla en texto plano) > Poneleshow (`obtener_poneleshow`) > X (`obtener_x`: `--x-post` vía api.fxtwitter.com, o timeline de syndication que casi siempre da 429). Cada emisión guarda `fuentes[]`; si la única fuente es X queda `provisorio`. Los nombres de canal se normalizan con `ALIAS`/`canal_norm`; los programas se matchean por inclusión normalizada (sin acentos), así "Hay música siempre" matchea "Hay Música". Probado el 2026-11-06 contra el sitio real: television.com.ar no encontró la planilla, Poneleshow devolvió el top completo de cada canal de aire, X dio 429. Antes del estreno el script termina con exit 1 ("ninguna fuente tiene Dominbord"); es lo esperado.
+**Scraper, lista `FUENTES` configurable:** cada fuente tiene `tipo` y `escala`. Ver IDs con `--listar-fuentes`; limitar con `--fuente ID` (repetible). Hoy: `television.com.ar` (planilla, ibope_amba), `poneleshow` (feed de Blogger, ibope_amba), `x:ismael_mon129` (nacional). Las de escala `ibope_amba` se combinan entre sí (la primera con el programa propio manda, las demás completan rivales). Las de escala `nacional` NUNCA se mezclan: solo si ninguna AMBA tiene el dato, y la emisión queda `provisorio`. `--grilla` lee la grilla de TeleRed y anota los rivales de la franja (corre domingo 22:30). Manual: `--rating/--comp`. Probado el 2026-11-06 contra el sitio real: Poneleshow devolvió el top completo de cada canal de aire; television.com.ar no encontró la planilla; X dio 429. Antes del estreno termina con exit 1 ("ninguna fuente tiene Dominbord"); es lo esperado.
 
-**Workflow:** `workflow_dispatch` acepta `fecha`, `x_post`, `youtube` y `solo_probar` (dry-run, no commitea). Probarlo con `gh workflow run actualizar.yml -f fecha=YYYY-MM-DD -f solo_probar=true` y leer el log con `gh run view <id> --log`.
+**Workflow:** seis crons en UTC (Argentina = UTC-3): domingo 22:30 (`--grilla`), lunes 10, 13, 17 y 20, martes 11. `workflow_dispatch` acepta `fecha`, `x_post`, `youtube` y `solo_probar` (dry-run, no commitea). Probar con `gh workflow run actualizar.yml -f fecha=YYYY-MM-DD -f solo_probar=true` y leer con `gh run view <id> --log`. El script es idempotente: sin cambios no escribe ni commitea.
 
 ## Convenciones
 
