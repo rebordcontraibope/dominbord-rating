@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dominbord · Rating</title>
+<meta name="description" content="Cuánto midió Dominbord, el programa de Tomás Rebord, según IBOPE. Emisión por emisión, contra los canales de aire.">
+<meta property="og:title" content="Dominbord · ¿Cuánto midió?">
+<meta property="og:description" content="El rating de cada emisión según IBOPE, y si le ganó a los demás canales de aire.">
+<meta property="og:image" content="assets/poster.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* paleta sacada del afiche: cielo nocturno, luces doradas, cortinas bordó, crema */
+    --bg:#070c1c; --bg-2:#0c1733; --surface:#111c3a; --surface-2:#172448; --line:rgba(245,239,224,.12);
+    --fg:#f5efe0; --fg-2:#b9b4a6; --fg-3:#8a8677;
+    --gold:#f2b544; --gold-2:#ffd27a; --gold-ink:#1a1304;
+    --crimson:#b3202f; --crimson-2:#e04a5a;
+    --win:#f2b544; --lose:#e04a5a; --pend:#7fb2ff;
+    --r-sm:10px; --r:16px; --r-lg:24px;
+    --font-display:"Anton","Impact","Arial Narrow",sans-serif;
+    --font-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --dur:220ms; --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:var(--gold-2)}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+  .skip{position:absolute;left:-999px;top:8px;background:var(--gold);color:var(--gold-ink);padding:8px 12px;border-radius:8px;z-index:100}
+  .skip:focus{left:8px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+  .display{font-family:var(--font-display);font-weight:400;letter-spacing:.01em;text-transform:uppercase;line-height:1.05}
+  .num{font-variant-numeric:tabular-nums}
+  .icon{width:1em;height:1em;flex:none;vertical-align:-.15em}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:20;background:rgba(7,12,28,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;min-height:44px}
+  .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 40%;border:2px solid var(--gold);background:#ddd}
+  .brand .t{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+  .brand .s{display:block;font-size:12px;color:var(--fg-2);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+  .status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-2);padding:8px 12px;border:1px solid var(--line);border-radius:999px;min-height:36px}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:var(--fg-3)}
+  .status.on{color:#fff;border-color:var(--crimson-2);background:rgba(179,32,47,.25)}
+  .status.on .dot{background:var(--crimson-2);box-shadow:0 0 0 0 rgba(224,74,90,.7);animation:pulse 1.6s infinite}
+  @keyframes pulse{to{box-shadow:0 0 0 10px rgba(224,74,90,0)}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;isolation:isolate;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg)}
+  /* fondo ambiental: el mismo afiche, difuminado y oscurecido */
+  .hero::before{content:"";position:absolute;inset:-10%;z-index:-2;background:url(assets/poster.webp) center 30%/cover no-repeat;filter:blur(48px) saturate(1.3) brightness(.45);transform:scale(1.1)}
+  .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,12,28,.35) 0%,rgba(7,12,28,.55) 60%,var(--bg) 100%)}
+  .hero .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center;padding-top:40px;padding-bottom:48px}
+  @media(min-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr) auto;gap:56px;padding-top:72px;padding-bottom:72px;min-height:600px}}
+  .hero-copy{min-width:0}
+  /* afiche como tarjeta, entero, sin recortes */
+  .poster{margin:0;position:relative;width:clamp(240px,26vw,340px);aspect-ratio:4/5;border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(242,181,68,.35);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 6px rgba(7,12,28,.6),0 0 60px rgba(242,181,68,.12);justify-self:end;transform:rotate(1.5deg)}
+  .poster img{display:block;width:100%;height:100%;object-fit:cover}
+  @media(max-width:899px){
+    .hero .wrap{padding-top:28px}
+    .poster{order:-1;justify-self:center;width:min(100%,240px);transform:none}
+  }
+  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 16px}
+  .hero h1{margin:0;font-size:clamp(44px,7.5vw,88px);text-shadow:0 6px 30px rgba(0,0,0,.6)}
+  .hero h1.h1-sm{font-size:clamp(28px,4.5vw,44px);color:var(--fg-2);text-shadow:none}
+  .hero h1 .thin{display:block;font-size:.42em;letter-spacing:.08em;margin-top:.1em;color:var(--fg-2);text-shadow:none}
+  .lead{margin:14px 0 0;max-width:58ch;color:var(--fg-2);font-size:17px}
+  .lead-sm{font-size:15px;margin-top:20px}
+  .ratingwrap{display:flex;align-items:center;gap:12px 36px;flex-wrap:wrap;margin-top:12px}
+  .rating{font-family:var(--font-display);font-size:clamp(96px,16vw,168px);line-height:1;letter-spacing:-.01em;color:var(--gold);text-shadow:0 0 40px rgba(242,181,68,.35),0 8px 30px rgba(0,0,0,.6)}
+  .rating small{display:block;font-family:var(--font-body);font-size:15px;line-height:1.4;color:var(--fg-2);font-weight:500;letter-spacing:.02em;text-transform:none;margin-top:4px;text-shadow:none}
+  .verdict{font-family:var(--font-display);font-size:clamp(24px,4vw,40px);max-width:16ch;line-height:1;text-transform:uppercase}
+  .verdict.win{color:var(--gold-2)} .verdict.lose{color:var(--crimson-2)} .verdict.mixed{color:var(--fg)}
+  .count{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:22px 0 0;max-width:520px}
+  .count div{background:rgba(17,28,58,.7);border:1px solid var(--line);border-radius:var(--r);padding:12px 6px;text-align:center;backdrop-filter:blur(6px)}
+  .count b{display:block;font-family:var(--font-display);font-size:clamp(34px,7vw,56px);line-height:1;color:var(--fg)}
+  .count span{font-size:11px;color:var(--fg-2);text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(17,28,58,.75);border-radius:999px;padding:8px 14px 8px 10px;font-size:14px;min-height:40px;backdrop-filter:blur(6px)}
+  .chip b{font-weight:700}
+  .chip .icon{width:18px;height:18px}
+  .chip.win{border-color:rgba(242,181,68,.55)} .chip.win .icon{color:var(--win)}
+  .chip.lose{border-color:rgba(224,74,90,.55)} .chip.lose .icon{color:var(--lose)}
+  .chip.na{opacity:.65} .chip.na .icon{color:var(--pend)}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:transform var(--dur) var(--ease),background var(--dur),border-color var(--dur),box-shadow var(--dur)}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0) scale(.98)}
+  .btn-primary{background:var(--gold);color:var(--gold-ink);box-shadow:0 8px 24px rgba(242,181,68,.25)}
+  .btn-primary:hover{background:var(--gold-2)}
+  .btn-ghost{background:rgba(17,28,58,.6);color:var(--fg);border-color:var(--line);backdrop-filter:blur(6px)}
+  .btn-ghost:hover{border-color:rgba(245,239,224,.35)}
+  .btn-yt{background:#e8192c;color:#fff}
+  .btn-yt:hover{background:#ff2d40}
+  .btn .icon{width:20px;height:20px}
+
+  /* estado "al aire": estática + rostro */
+  .static{position:relative;width:min(100%,360px);aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);margin:20px 0 0;background:#444}
+  .static canvas{position:absolute;inset:0;width:100%;height:100%}
+  .static img{position:absolute;left:50%;top:50%;height:88%;transform:translate(-50%,-50%);filter:grayscale(1) contrast(1.1);mix-blend-mode:multiply}
+  .static .lbl{position:absolute;left:12px;top:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(179,32,47,.9);padding:4px 8px;border-radius:6px}
+
+  /* ---------- secciones ---------- */
+  main.wrap{padding:40px 16px 72px}
+  .grid{display:grid;grid-template-columns:1fr;gap:20px}
+  @media(min-width:900px){.grid{grid-template-columns:1.35fr .65fr}}
+  .card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line);border-radius:var(--r-lg);padding:22px}
+  .card h2{margin:0 0 14px;font-family:var(--font-display);font-size:22px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+  .card h2 .icon{color:var(--gold);width:22px;height:22px}
+  .empty{display:flex;gap:12px;align-items:flex-start;color:var(--fg-2);padding:8px 0}
+  .empty .icon{color:var(--gold);width:22px;height:22px;flex:none;margin-top:2px}
+
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{padding:12px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--fg-2);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+  th.r,td.r{text-align:right}
+  td.rt{font-family:var(--font-display);font-size:26px;color:var(--gold);line-height:1}
+  tr:last-child td{border-bottom:0}
+  .vs{display:flex;flex-wrap:wrap;gap:6px}
+  .vs span{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--fg-2)}
+  .vs span .icon{width:12px;height:12px}
+  .vs .w{color:var(--gold-2);border-color:rgba(242,181,68,.4)} .vs .l{color:var(--crimson-2);border-color:rgba(224,74,90,.4)}
+  .score{display:block;margin-top:6px;font-size:12px;color:var(--fg-2)}
+  .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(127,178,255,.15);color:var(--pend);letter-spacing:.04em;text-transform:uppercase}
+  .ytlink{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--fg);text-decoration:none;font-weight:600}
+  .ytlink .icon{color:#ff2d40;width:20px;height:20px}
+  .ytlink:hover{color:var(--gold-2)}
+  @media(max-width:640px){
+    table thead{display:none}
+    table tr{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:center}
+    table td{border:0;padding:0}
+    td:nth-child(1){color:var(--fg-2);font-size:13px}
+    td:nth-child(4),td:nth-child(5){grid-column:1/-1;margin-top:8px}
+  }
+
+  svg.chart{width:100%;height:auto;display:block}
+  .chart text{fill:var(--fg-2);font-size:11px;font-family:var(--font-body)}
+  .chart .axis{stroke:var(--line)}
+  .chart .ln{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+  .chart .pt{fill:var(--gold);stroke:var(--bg-2);stroke-width:2}
+  .chart .ref{fill:none;stroke:var(--fg-2);stroke-width:1.5;stroke-dasharray:3 5}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;font-size:13px;color:var(--fg-2)}
+  .legend i{display:inline-block;width:18px;height:0;border-top:3px solid var(--gold);vertical-align:middle;margin-right:6px;border-radius:2px}
+  .legend i.d{border-top:2px dashed var(--fg-2)}
+
+  .how{margin-top:28px;color:var(--fg-2);font-size:15px;max-width:72ch}
+  .how h2{color:var(--fg);font-family:var(--font-display);font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+  .how p{margin:0 0 12px}
+  footer{border-top:1px solid var(--line);padding:20px 0;color:var(--fg-3);font-size:13px}
+  footer a{color:var(--fg-2)}
+
+  .fade{animation:fade .5s var(--ease) both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+  .demo{position:fixed;right:12px;bottom:12px;z-index:30;font-size:12px;background:var(--pend);color:#061127;padding:6px 10px;border-radius:8px;font-weight:800}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l11-6.5z"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l2-6 4 12 2-6h6"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 21h8M12 2l3 4M12 2L9 6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></symbol>
+</svg>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#" aria-label="Dominbord, inicio">
+      <img src="assets/rebord.webp" width="40" height="40" alt="">
+      <span><span class="t" id="nombre">Dominbord</span><span class="s" id="meta">domingos 22:00</span></span>
+    </a>
+    <div class="status" id="live" role="status"><span class="dot" aria-hidden="true"></span><span id="liveTxt">Fuera de aire</span></div>
+  </div>
+</header>
+
+<section class="hero" aria-labelledby="heroTitle">
+  <div class="wrap">
+    <div id="hero" class="hero-copy"></div>
+    <figure class="poster"><img src="assets/poster.webp" width="1080" height="1350" alt="Afiche de Tomás Rebord: Dominbord, domingos 22 hs." fetchpriority="high"></figure>
+  </div>
+</section>
+
+<main id="main" class="wrap">
+  <div class="grid">
+    <section class="card" aria-labelledby="tTabla">
+      <h2 id="tTabla"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Programas emitidos</h2>
+      <div id="tabla"></div>
+    </section>
+    <section class="card" aria-labelledby="tChart">
+      <h2 id="tChart"><svg class="icon" aria-hidden="true"><use href="#i-pulse"/></svg>Evolución</h2>
+      <div id="chart"></div>
+    </section>
+  </div>
+
+  <section class="how" aria-labelledby="tHow">
+    <h2 id="tHow">¿Qué es esto?</h2>
+    <p>El rating en Argentina lo mide Kantar IBOPE Media con <em>people meters</em> en hogares del AMBA. Un punto de rating es el 1% de ese universo: unos 30.000 hogares, o algo más de 100.000 personas mirando en promedio cada minuto. No hay API pública: los números salen al día siguiente en las planillas que publican medios especializados, y esta página se actualiza con eso.</p>
+    <p>"Le ganó" significa que el rating promedio de <span class="prog">Dominbord</span> superó al del programa que cada canal de aire emitía en la misma franja. Durante la emisión podés seguir el minuto a minuto en <a id="rtr" href="#" target="_blank" rel="noopener">Real Time Rating</a>.</p>
+  </section>
+</main>
+<footer><div class="wrap">Hecho con cariño por la gente que mira <span class="prog">Dominbord</span>. Fuente de los números: Kantar IBOPE Media vía planillas públicas.</div></footer>
+
+<script src="data/emisiones.js"></script>
+<script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  const DEMO = qs.get('demo') === '1';
+  const FORCE = qs.get('estado'); // ?estado=aire | pendiente (solo para probar diseño)
+  const D = window.DOMINGO_DATA || {config:{},emisiones:[]};
+  const C = D.config;
+  let E = (D.emisiones || []).slice();
+
+  if (DEMO) {
+    E = [
+      {numero:1,fecha:'2026-11-15',rating:4.2,youtube:'https://www.youtube.com/',estado:'confirmado',
+       competencia:[{canal:'Telefe',programa:'Por el mundo',rating:7.9},{canal:'eltrece',programa:'Cine',rating:3.1},{canal:'elnueve',programa:'Cine',rating:1.4},{canal:'TV Pública',programa:'Fútbol',rating:0.6}]},
+      {numero:2,fecha:'2026-11-22',rating:5.6,youtube:'https://www.youtube.com/',estado:'confirmado',
+       competencia:[{canal:'Telefe',programa:'Por el mundo',rating:7.2},{canal:'eltrece',programa:'Cine',rating:3.4},{canal:'elnueve',programa:'Cine',rating:1.6},{canal:'TV Pública',programa:'Fútbol',rating:0.5}]},
+      {numero:3,fecha:'2026-11-29',rating:8.1,youtube:'https://www.youtube.com/',estado:'confirmado',
+       competencia:[{canal:'Telefe',programa:'Por el mundo',rating:7.5},{canal:'eltrece',programa:'Cine',rating:3.0},{canal:'elnueve',programa:'Cine',rating:1.3},{canal:'TV Pública',programa:'Fútbol',rating:0.7}]}
+    ];
+    const b=document.createElement('div'); b.className='demo'; b.textContent='DATOS DE EJEMPLO (?demo=1)'; document.body.appendChild(b);
+  }
+
+  const $ = s => document.querySelector(s);
+  const fmt1 = n => (n==null||isNaN(n)) ? '–' : Number(n).toFixed(1).replace('.',',');
+  const fmtK = n => n==null ? '' : '≈ ' + Math.round(n*(C.punto_en_personas||110000)/1000).toLocaleString('es-AR') + ' mil personas por minuto';
+  const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const ico = id => `<svg class="icon" aria-hidden="true"><use href="#${id}"/></svg>`;
+  const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fechaLarga = iso => { const d=new Date(iso+'T12:00:00-03:00'); return `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`; };
+  const isoDate = d => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Argentina/Buenos_Aires',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
+
+  const estreno = new Date(C.estreno || '2026-11-15T22:00:00-03:00');
+  const dur = (C.duracion_min||90)*60000;
+  const WEEK = 7*24*3600000;
+  let now = DEMO ? new Date('2026-12-01T12:00:00-03:00') : new Date();
+  if (FORCE==='aire') now = new Date(estreno.getTime()+20*60000);
+  if (FORCE==='pendiente') now = new Date(estreno.getTime()+8*3600000);
+
+  const ultimaProgramada = () => now < estreno ? null : new Date(estreno.getTime() + Math.floor((now-estreno)/WEEK)*WEEK);
+  const proximaProgramada = () => now < estreno ? estreno : new Date(estreno.getTime() + (Math.floor((now-estreno)/WEEK)+1)*WEEK);
+  const alAire = (()=>{ const u=ultimaProgramada(); return u && now >= u && now < new Date(u.getTime()+dur); })();
+
+  $('#nombre').textContent = C.programa ||'Dominbord';
+  document.querySelectorAll('.prog').forEach(e=>e.textContent=C.programa||'Dominbord');
+  $('#meta').textContent = `${C.dia_semana||'domingo'}s ${C.horario||'22:00'}${C.canal && C.canal!=='CANAL_PROPIO' ? ' · '+C.canal : ''}`;
+  $('#rtr').href = C.realtime_rating || 'https://x.com/RealTimeRating';
+  if (alAire){ $('#live').classList.add('on'); $('#liveTxt').textContent='Al aire'; }
+
+  function veredicto(em){
+    const comp = (em.competencia||[]).filter(c=>c.rating!=null);
+    const wins = comp.filter(c => em.rating > c.rating).length, total = comp.length;
+    if (!total) return {cls:'mixed',txt:'Competencia todavía sin cargar',wins,total};
+    if (wins===total) return {cls:'win',txt:`Le ganó a los ${total} canales de aire`,wins,total};
+    if (wins===0) return {cls:'lose',txt:`Perdió con los ${total} canales de aire`,wins,total};
+    return {cls:'mixed',txt:`Le ganó a ${wins} de ${total} canales`,wins,total};
+  }
+  const chips = em => (em.competencia||[]).map(c=>{
+    const na = c.rating==null, win = !na && em.rating>c.rating;
+    const cls = na?'na':(win?'win':'lose'), label = na?'pendiente':(win?'le ganó a':'perdió con');
+    return `<span class="chip ${cls}" title="${label} ${esc(c.canal)}">${ico(na?'i-clock':(win?'i-check':'i-x'))}<span class="sr" hidden>${label}</span>${esc(c.canal)}${c.programa?` · ${esc(c.programa)}`:''} <b class="num">${fmt1(c.rating)}</b></span>`;
+  }).join('');
+
+  const conf = E.filter(e=>e.rating!=null).sort((a,b)=>a.fecha<b.fecha?1:-1);
+  const ultima = conf[0];
+  const ultimaProg = ultimaProgramada();
+  const pendiente = ultimaProg && !E.some(e => e.fecha===isoDate(ultimaProg) && e.rating!=null);
+  const hero = $('#hero');
+  const rtrBtn = `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${esc(C.realtime_rating||'#')}">${ico('i-pulse')}Minuto a minuto en vivo ${ico('i-ext')}</a>`;
+
+  if (now < estreno){
+    hero.innerHTML = `
+      <p class="kicker">${ico('i-tv')} Estreno</p>
+      <h1 id="heroTitle" class="display">Domingo 22 hs.<span class="thin">${fechaLarga(isoDate(estreno))}</span></h1>
+      <p class="lead">Después de cada emisión, acá vas a ver cuánto midió según IBOPE y si le ganó a los demás canales de aire. El primer veredicto llega el lunes.</p>
+      <div class="count" id="count" role="timer" aria-live="off"></div>
+      <div class="btns">${rtrBtn}</div>`;
+    tick(estreno);
+  } else if (pendiente){
+    const f = isoDate(ultimaProg);
+    hero.innerHTML = `
+      <p class="kicker">${ico(alAire?'i-tv':'i-clock')} ${alAire?'Ahora al aire':'Emisión del '+fechaLarga(f)}</p>
+      <h1 id="heroTitle" class="display">${alAire?'Está saliendo ahora':'Esperando a IBOPE'}<span class="thin">${alAire?'el rating lo sabemos mañana':'las planillas salen el lunes a la mañana'}</span></h1>
+      <div class="static" aria-hidden="true"><canvas id="noise"></canvas><img src="assets/rebord.webp" alt=""><span class="lbl">${alAire?'En vivo':'Señal en espera'}</span></div>
+      <div class="btns">${rtrBtn}${ultima?`<a class="btn btn-ghost" href="#main">${ico('i-list')}Emisiones anteriores</a>`:''}</div>`;
+    noise();
+  } else if (ultima){
+    const v = veredicto(ultima);
+    hero.innerHTML = `
+      <p class="kicker">${ico('i-tv')} Programa #${ultima.numero??conf.length} · ${fechaLarga(ultima.fecha)} ${ultima.estado==='provisorio'?'<span class="tag">provisorio</span>':''}</p>
+      <h1 id="heroTitle" class="display h1-sm">Rating según IBOPE</h1>
+      <div class="ratingwrap fade">
+        <div class="rating num" aria-label="${fmt1(ultima.rating)} puntos">${fmt1(ultima.rating)}<small>${fmtK(ultima.rating)}</small></div>
+        <div class="verdict ${v.cls}">${v.txt}</div>
+      </div>
+      <div class="chips">${chips(ultima)}</div>
+      <div class="btns">
+        ${ultima.youtube?`<a class="btn btn-yt" target="_blank" rel="noopener" href="${esc(ultima.youtube)}">${ico('i-play')}Ver el programa en YouTube</a>`:''}
+        ${rtrBtn}
+      </div>
+      <p class="lead lead-sm">Próxima emisión: ${fechaLarga(isoDate(proximaProgramada()))} a las ${C.horario||'22:00'}.</p>`;
+  }
+
+  function tick(target){
+    const el = $('#count'); if(!el) return;
+    const r = () => {
+      let ms = target - new Date(); if (ms<0){ location.reload(); return; }
+      const d=Math.floor(ms/86400000), h=Math.floor(ms%86400000/3600000), m=Math.floor(ms%3600000/60000), s=Math.floor(ms%60000/1000);
+      el.innerHTML = [[d,'días'],[h,'horas'],[m,'min'],[s,'seg']].map(([n,l])=>`<div><b class="num">${String(n).padStart(2,'0')}</b><span>${l}</span></div>`).join('');
+    }; r(); setInterval(r,1000);
+  }
+
+  function noise(){
+    const cv = $('#noise'); if(!cv) return;
+    const ctx = cv.getContext('2d'); cv.width=160; cv.height=90;
+    const img = ctx.createImageData(cv.width,cv.height), px = img.data;
+    const draw = () => { for (let i=0;i<px.length;i+=4){ const v=(Math.random()*255)|0; px[i]=px[i+1]=px[i+2]=v; px[i+3]=255; } ctx.putImageData(img,0,0); };
+    draw();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(draw, 90);
+  }
+
+  // ---------- tabla ----------
+  const todas = E.slice().sort((a,b)=>a.fecha<b.fecha?1:-1);
+  if (!todas.length){
+    $('#tabla').innerHTML = `<p class="empty">${ico('i-clock')}<span>Todavía no salió ningún programa. El primero es el ${fechaLarga(isoDate(estreno))}; el rating aparece acá el lunes siguiente.</span></p>`;
+  } else {
+    $('#tabla').innerHTML = `<table><thead><tr><th scope="col">#</th><th scope="col">Fecha</th><th scope="col" class="r">Rating</th><th scope="col">vs. aire</th><th scope="col"><span class="sr-only">Video</span></th></tr></thead><tbody>` +
+      todas.map(e=>{
+        const v = veredicto(e);
+        const vs = (e.competencia||[]).map(c=>{ const na=c.rating==null, w=!na&&e.rating>c.rating; return `<span class="${na?'':(w?'w':'l')}">${na?'':ico(w?'i-check':'i-x')}${esc(c.canal)} ${fmt1(c.rating)}</span>`; }).join('');
+        return `<tr>
+          <td class="num">#${e.numero??''}</td>
+          <td>${fechaLarga(e.fecha)}${e.estado==='provisorio'?' <span class="tag">prov.</span>':''}</td>
+          <td class="r rt num">${fmt1(e.rating)}</td>
+          <td><div class="vs">${vs||'<span>sin datos</span>'}</div>${v.total?`<span class="score">${v.wins} de ${v.total} ganados</span>`:''}</td>
+          <td class="r">${e.youtube?`<a class="ytlink" href="${esc(e.youtube)}" target="_blank" rel="noopener">${ico('i-play')}YouTube</a>`:''}</td>
+        </tr>`;
+      }).join('') + `</tbody></table>`;
+  }
+
+  // ---------- chart ----------
+  const serie = E.filter(e=>e.rating!=null).sort((a,b)=>a.fecha<b.fecha?-1:1);
+  if (serie.length < 2){
+    $('#chart').innerHTML = `<p class="empty">${ico('i-pulse')}<span>Con dos emisiones ya aparece la curva de ${esc(C.programa||'Dominbord')} contra el líder de la franja.</span></p>`;
+  } else {
+    const W=420,H=230,P={l:34,r:14,t:14,b:30};
+    const lider = serie.map(e=>Math.max(...(e.competencia||[]).map(c=>c.rating??0),0));
+    const maxY = Math.max(...serie.map(e=>e.rating), ...lider)*1.15 || 10;
+    const x = i => P.l + i*(W-P.l-P.r)/(serie.length-1);
+    const y = v => H-P.b - v*(H-P.t-P.b)/maxY;
+    const path = serie.map((e,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(e.rating).toFixed(1)}`).join(' ');
+    const pathL = lider.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const ticks = [0, Math.round(maxY/2*10)/10, Math.round(maxY*10)/10];
+    const resumen = `Rating por emisión: ${serie.map(e=>'#'+e.numero+' '+fmt1(e.rating)).join(', ')}.`;
+    $('#chart').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(resumen)}">
+      ${ticks.map(t=>`<line class="axis" x1="${P.l}" x2="${W-P.r}" y1="${y(t)}" y2="${y(t)}"/><text x="${P.l-6}" y="${y(t)+4}" text-anchor="end">${fmt1(t)}</text>`).join('')}
+      <path class="ref" d="${pathL}"/>
+      <path class="ln" d="${path}"/>
+      ${serie.map((e,i)=>`<circle class="pt" cx="${x(i)}" cy="${y(e.rating)}" r="5"><title>Programa #${e.numero}: ${fmt1(e.rating)} puntos</title></circle><text x="${x(i)}" y="${y(e.rating)-11}" text-anchor="middle" style="fill:var(--gold-2);font-weight:700">${fmt1(e.rating)}</text><text x="${x(i)}" y="${H-9}" text-anchor="middle">#${e.numero??i+1}</text>`).join('')}
+    </svg>
+    <div class="legend"><span><i></i>${esc(C.programa||'Dominbord')}</span><span><i class="d"></i>Líder de la franja</span></div>`;
+  }
+})();
+</script>
+</body>
+</html>

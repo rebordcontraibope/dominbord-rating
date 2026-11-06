@@ -1,0 +1,57 @@
+name: Actualizar rating
+
+on:
+  schedule:
+    # Lunes 11:00 Argentina (14:00 UTC): ya suele estar la planilla de television.com.ar
+    - cron: "0 14 * * 1"
+    # Lunes 20:00 Argentina (23:00 UTC): el post de X suele salir a la tarde; completa o confirma
+    - cron: "0 23 * * 1"
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: "Fecha de la emisión (YYYY-MM-DD). Vacío = último domingo"
+        required: false
+      x_post:
+        description: "Link a un post de X con los ratings (opcional)"
+        required: false
+      youtube:
+        description: "Link al programa en YouTube (opcional)"
+        required: false
+      solo_probar:
+        description: "Solo mostrar qué haría, sin escribir ni commitear"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Correr scraper (television.com.ar + X)
+        env:
+          FECHA: ${{ github.event.inputs.fecha }}
+          X_POST: ${{ github.event.inputs.x_post }}
+          YOUTUBE: ${{ github.event.inputs.youtube }}
+          SOLO_PROBAR: ${{ github.event.inputs.solo_probar }}
+        run: |
+          ARGS=""
+          [ -n "$FECHA" ]   && ARGS="$ARGS --fecha $FECHA"
+          [ -n "$X_POST" ]  && ARGS="$ARGS --x-post $X_POST"
+          [ -n "$YOUTUBE" ] && ARGS="$ARGS --youtube $YOUTUBE"
+          [ "$SOLO_PROBAR" = "true" ] && ARGS="$ARGS --dry-run"
+          python3 scripts/actualizar_rating.py $ARGS
+
+      - name: Commitear si cambió
+        if: ${{ github.event.inputs.solo_probar != 'true' }}
+        run: |
+          git config user.name "rating-bot"
+          git config user.email "rating-bot@users.noreply.github.com"
+          git add data/emisiones.js
+          git diff --cached --quiet && echo "Sin cambios" || (git commit -m "rating: actualización automática" && git push)
