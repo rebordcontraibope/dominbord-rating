@@ -152,6 +152,14 @@ def main() -> None:
     con_dato = [e for e in leer_datos().get("emisiones", []) if e.get("rating") is not None]
     if not con_dato:
         print("Todavía no hay ningún round con rating; la tarjeta sigue con la placa genérica.")
+        if dry:  # igual renderizamos una de prueba: valida ImageMagick, webp y fuentes en el runner
+            muestra = {"numero": 1, "fecha": "2026-11-15", "rating": 4.2, "estado": "confirmado",
+                       "competencia": [{"canal": "Telefe", "programa": "MasterChef Celebrity", "rating": 7.9},
+                                       {"canal": "eltrece", "programa": "Cine", "rating": 3.1}]}
+            with tempfile.TemporaryDirectory() as tmp:
+                destino = Path(tmp) / "prueba.jpg"
+                componer(muestra, destino)
+                print(f"[dry-run] render de prueba OK ({destino.stat().st_size} bytes).")
         return
     em = max(con_dato, key=lambda e: e["fecha"])
     nombre = f"round-{em.get('numero') or em['fecha']}.jpg"
