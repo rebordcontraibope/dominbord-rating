@@ -392,15 +392,13 @@
   const ultimaProg = ultimaProgramada();
   const pendiente = ultimaProg && !E.some(e => e.fecha===isoDate(ultimaProg) && e.rating!=null);
   const hero = $('#hero');
-  const rtrBtn = `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${esc(C.realtime_rating||'#')}">${ico('i-pulse')}Minuto a minuto en vivo ${ico('i-ext')}</a>`;
 
   if (now < estreno){
     hero.innerHTML = `
       <p class="kicker">${ico('i-tv')} Round 1 · Estreno</p>
       <h1 id="heroTitle" class="display">Domingo 22 hs.<span class="thin">${fechaLarga(isoDate(estreno))}</span></h1>
       <p class="lead">El domingo a las 22 se prende la caja. El lunes sabemos si funcionó: cuánto midió según IBOPE y si le ganó a los canales de aire.</p>
-      <div class="count" id="count" role="timer" aria-live="off"></div>
-      <div class="btns">${rtrBtn}</div>`;
+      <div class="count" id="count" role="timer" aria-live="off"></div>`;
     tick(estreno);
   } else if (pendiente){
     const f = isoDate(ultimaProg);
@@ -408,7 +406,7 @@
       <p class="kicker">${ico(alAire?'i-tv':'i-clock')} ${alAire?'Round '+(conf.length+1)+' · en el ring':'Round '+(conf.length+1)+' · '+fechaLarga(f)}</p>
       <h1 id="heroTitle" class="display">${alAire?'Está saliendo ahora':'Esperando el fallo'}<span class="thin">${alAire?'el rating lo sabemos mañana':'las planillas salen el lunes a la mañana'}</span></h1>
       <div class="static" aria-hidden="true"><canvas id="noise"></canvas><img src="assets/rebord.webp" alt=""><span class="lbl">${alAire?'En vivo':'Señal en espera'}</span></div>
-      <div class="btns">${rtrBtn}${ultima?`<a class="btn btn-ghost" href="#main">${ico('i-list')}Emisiones anteriores</a>`:''}</div>`;
+      <div class="btns">${ultima?`<a class="btn btn-ghost" href="#main">${ico('i-list')}Emisiones anteriores</a>`:''}</div>`;
     noise();
     if (!alAire){ $('#liveTxt').textContent='Esperando el fallo'; }
     document.title = (alAire?'En el ring':'Esperando el fallo') + ' · Rebord contra Ibope';
@@ -429,7 +427,6 @@
       <div class="chips">${chips(ultima)}</div>
       <div class="btns">
         ${ultima.youtube?`<a class="btn btn-yt" target="_blank" rel="noopener" href="${esc(ultima.youtube)}">${ico('i-play')}Ver el programa en YouTube</a>`:''}
-        ${rtrBtn}
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${shareUrl(v.cls==='win'
           ? `Dominbord hizo ${fmt1(ultima.rating)} y le ganó a los ${v.total} canales de aire. IBOPE ESTÁ COGIDO.`
           : v.total>0 ? `Dominbord hizo ${fmt1(ultima.rating)} y le ganó a ${v.wins} de ${v.total} canales de aire. Estamos cerca de cogernos a Ibope.`

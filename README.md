@@ -19,7 +19,7 @@ Abrí `index.html` en el navegador. Para ver cómo queda con datos, abrilo con `
 La página tiene tres estados automáticos según la hora de Argentina:
 
 1. Antes del estreno: cuenta regresiva al domingo 15/11 22:00.
-2. Desde que arranca la emisión hasta que hay dato cargado: "Al aire" / "Esperando a IBOPE", con link al minuto a minuto de Real Time Rating.
+2. Desde que arranca la emisión hasta que hay dato cargado: "En el ring" / "Esperando el fallo".
 3. Con dato: rating grande, veredicto contra cada canal de aire, botón a YouTube, tabla histórica y curva.
 
 ## Configurar
@@ -28,7 +28,7 @@ En `data/emisiones.js`, bloque `config`:
 
 - `canal`: canal propio, tal como lo escribe television.com.ar (`Telefe`, `eltrece`, `América`, `elnueve`, `TV Pública`).
 - `competencia`: un ítem por canal rival con el **nombre del programa que va en la misma franja** (domingo 22:00). Es lo que el scraper busca en el top 5 de cada canal. Si lo dejás vacío, ese canal queda pendiente y se carga a mano.
-- `estreno`, `horario`, `duracion_min`, `youtube_canal`, `realtime_rating`.
+- `estreno`, `horario`, `duracion_min`, `youtube_canal`.
 
 ## Cargar el rating de una emisión
 

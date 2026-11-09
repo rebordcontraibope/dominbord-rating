@@ -14,7 +14,6 @@ window.DOMINGO_DATA = {
     "dia_semana": "domingo",
     "horario": "22:00",
     "youtube_canal": "https://www.youtube.com/",
-    "realtime_rating": "https://x.com/RealTimeRating",
     "fuente_planillas": "https://television.com.ar/noticias/?categoria=ratings",
     "punto_en_personas": 110000,
     "competencia": [
