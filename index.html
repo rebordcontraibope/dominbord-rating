@@ -232,6 +232,13 @@
   .how{margin-top:28px;color:var(--fg-2);font-size:15px;max-width:72ch}
   .how h2{color:var(--fg);font-family:var(--font-display);font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
   .how p{margin:0 0 12px}
+  .aporte{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-top:20px;padding:16px 18px;border:1px solid rgba(242,181,68,.3);border-radius:var(--r);background:linear-gradient(135deg,rgba(242,181,68,.10),rgba(179,32,47,.10))}
+  .aporte p{margin:0;color:var(--fg)}
+  .aporte p small{display:block;color:var(--fg-2);font-size:13px;margin-top:2px}
+  .aporte .btn{flex:none}
+  .btn-hagov{background:var(--crimson);color:#fff;border-color:transparent}
+  .btn-hagov:hover{background:var(--crimson-2)}
+  .btn-hagov .icon{color:var(--gold-2)}
   footer{border-top:1px solid var(--line);padding:20px 0;color:var(--fg-3);font-size:13px}
   footer a{color:var(--fg-2)}
 
@@ -297,6 +304,10 @@
     <p>El rating en Argentina lo mide Kantar IBOPE Media con <em>people meters</em>: las famosas <strong>cajas de Ibope</strong>, unos miles de aparatos en hogares del AMBA que registran qué canal está puesto, minuto a minuto. Un punto de rating es el 1% de ese universo, algo más de 100.000 personas mirando en promedio cada minuto. No hay API pública: los números salen al día siguiente en las planillas que publican medios especializados, y esta página se actualiza con eso.</p>
     <p>La misión de los hagoveros es conocida: <strong>cogerse a Ibope</strong>. Detectar quién tiene una caja, prenderla en América a las 22 en punto, dejarla a todo volumen hasta que termine y conseguir un super rating que se lleve el titular del lunes. Las edibordiales medían tres puntos. Acá se mide si la conspiración funciona, domingo a domingo.</p>
     <p>"Le ganó" significa que el rating promedio de <span class="prog">Dominbord</span>, el programa de Tomás Rebord en América, superó al del programa que cada canal de aire emitía en la misma franja. El dato es siempre el de IBOPE para el AMBA, tomado de fuentes públicas.</p>
+    <div class="aporte">
+      <p><strong>¿Querés que la conspiración siga?</strong><small>HAGOV banca el sistema que hace posible todo esto. Poné plata ahí, no acá.</small></p>
+      <a class="btn btn-hagov" href="https://hagov.ar/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>Contribuir con HAGOV <svg class="icon" aria-hidden="true"><use href="#i-ext"/></svg></a>
+    </div>
   </section>
 </main>
 <footer><div class="wrap">Esto no es la web de <span class="prog">Dominbord</span> ni de América. Es la de los que miran la caja. Fuente de los números: Kantar IBOPE Media vía planillas públicas. Consultas, correcciones o chascarrillos: <a href="mailto:rebordcontraibope@tutamail.com">rebordcontraibope@tutamail.com</a>.</div></footer>
