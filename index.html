@@ -95,6 +95,7 @@
   .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 40%;border:2px solid var(--gold);background:#ddd}
   .brand .t{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
   .brand .s{display:block;font-size:12px;color:var(--fg-2);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+  @media(max-width:640px){.brand .t{font-size:17px}.brand .s{font-size:10px}}
   .status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-2);padding:8px 12px;border:1px solid var(--line);border-radius:999px;min-height:36px}
   .marcador{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-2);white-space:nowrap}
   .marcador b{font-family:var(--font-display);font-size:22px;letter-spacing:.02em;color:var(--fg);font-weight:400;line-height:1}
@@ -173,6 +174,16 @@
 
   /* ---------- secciones ---------- */
   main.wrap{padding:40px 16px 72px}
+  .tanteador{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px 18px;margin:0 0 20px;padding:18px 20px 16px;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--surface),var(--bg-2))}
+  .tanteador .lado{display:flex;align-items:center;gap:14px}
+  .tanteador .lado:last-of-type{justify-content:flex-end}
+  .tanteador .quien{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2)}
+  .tanteador b{font-family:var(--font-display);font-size:56px;line-height:1;font-weight:400}
+  .tanteador b.win{color:var(--gold)} .tanteador b.lose{color:var(--crimson-2)}
+  .tanteador .vs-big{font-family:var(--font-display);font-size:22px;color:var(--fg-3);letter-spacing:.1em;text-transform:uppercase}
+  .tanteador .pie{grid-column:1/-1;margin:4px 0 0;text-align:center;font-size:13px;color:var(--fg-2)}
+  .tanteador .pie:empty{display:none}
+  @media(max-width:640px){.tanteador{padding:14px 14px 12px;gap:6px 10px}.tanteador b{font-size:40px}.tanteador .lado{gap:10px}}
   .grid{display:grid;grid-template-columns:1fr;gap:20px}
   @media(min-width:900px){.grid{grid-template-columns:1.35fr .65fr}}
   .card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line);border-radius:var(--r-lg);padding:22px}
@@ -243,12 +254,12 @@
 
 <header>
   <div class="wrap bar">
-    <a class="brand" href="#" aria-label="Dominbord, inicio">
+    <a class="brand" href="#" aria-label="Rebord contra Ibope, inicio">
       <img src="assets/rebord.webp" width="40" height="40" alt="">
-      <span><span class="t" id="nombre">Dominbord</span><span class="s" id="meta">domingos 22:00</span></span>
+      <span><span class="t" id="nombre">Rebord contra Ibope</span><span class="s" id="meta">Dominbord · domingos 22:00</span></span>
     </a>
     <div class="marcador" id="marcador" hidden aria-label="Marcador histórico"></div>
-    <div class="status" id="live" role="status"><span class="dot" aria-hidden="true"></span><span id="liveTxt">Fuera de aire</span></div>
+    <div class="status" id="live" role="status"><span class="dot" aria-hidden="true"></span><span id="liveTxt">Esperando el round</span></div>
   </div>
 </header>
 
@@ -260,9 +271,15 @@
 </section>
 
 <main id="main" class="wrap">
+  <section class="tanteador" id="tanteador" aria-label="Tanteador de la pelea">
+    <div class="lado"><span class="quien">Rebord</span><b class="num win" id="tRebord">0</b></div>
+    <span class="vs-big" aria-hidden="true">vs</span>
+    <div class="lado"><b class="num lose" id="tIbope">0</b><span class="quien">Ibope</span></div>
+    <p class="pie" id="tPie"></p>
+  </section>
   <div class="grid">
     <section class="card" aria-labelledby="tTabla">
-      <h2 id="tTabla"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Programas emitidos</h2>
+      <h2 id="tTabla"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Round por round</h2>
       <div id="tabla"></div>
     </section>
     <section class="card" aria-labelledby="tChart">
@@ -278,7 +295,7 @@
     <p>"Le ganó" significa que el rating promedio de <span class="prog">Dominbord</span>, el programa de Tomás Rebord en América, superó al del programa que cada canal de aire emitía en la misma franja. El dato es siempre el de IBOPE para el AMBA, tomado de fuentes públicas.</p>
   </section>
 </main>
-<footer><div class="wrap">Hecho con cariño por la gente que mira <span class="prog">Dominbord</span>. Fuente de los números: Kantar IBOPE Media vía planillas públicas. Consultas, correcciones o chascarrillos: <a href="mailto:rebordcontraibope@tutamail.com">rebordcontraibope@tutamail.com</a>.</div></footer>
+<footer><div class="wrap">Esto no es la web de <span class="prog">Dominbord</span> ni de América. Es la de los que miran la caja. Fuente de los números: Kantar IBOPE Media vía planillas públicas. Consultas, correcciones o chascarrillos: <a href="mailto:rebordcontraibope@tutamail.com">rebordcontraibope@tutamail.com</a>.</div></footer>
 
 <script src="data/emisiones.js"></script>
 <script>
@@ -323,10 +340,9 @@
   const proximaProgramada = () => now < estreno ? estreno : new Date(estreno.getTime() + (Math.floor((now-estreno)/WEEK)+1)*WEEK);
   const alAire = (()=>{ const u=ultimaProgramada(); return u && now >= u && now < new Date(u.getTime()+dur); })();
 
-  $('#nombre').textContent = C.programa ||'Dominbord';
   document.querySelectorAll('.prog').forEach(e=>e.textContent=C.programa||'Dominbord');
-  $('#meta').textContent = `${C.dia_semana||'domingo'}s ${C.horario||'22:00'}${C.canal && C.canal!=='CANAL_PROPIO' ? ' · '+C.canal : ''}`;
-  if (alAire){ $('#live').classList.add('on'); $('#liveTxt').textContent='Al aire'; }
+  $('#meta').textContent = `${C.programa||'Dominbord'} · ${C.dia_semana||'domingo'}s ${C.horario||'22:00'}${C.canal && C.canal!=='CANAL_PROPIO' ? ' · '+C.canal : ''}`;
+  if (alAire){ $('#live').classList.add('on'); $('#liveTxt').textContent='En el ring'; }
 
   function veredicto(em){
     const comp = (em.competencia||[]).filter(c=>c.rating!=null);
@@ -353,6 +369,11 @@
     m.innerHTML = `<span>Rebord</span><b class="num win">${ganadas}</b><span class="sep">·</span><b class="num lose">${perdidas}</b><span>Ibope</span>`;
   }
   let racha = 0; for (const e of conf){ if (veredicto(e).cls==='win') racha++; else break; }
+  $('#tRebord').textContent = ganadas; $('#tIbope').textContent = perdidas;
+  $('#tPie').textContent = !conf.length
+    ? `Primer round: ${fechaLarga(isoDate(estreno))} a las ${C.horario||'22:00'}.`
+    : racha>=2 ? `${conf.length} round${conf.length>1?'s':''} peleados · ${racha} seguidos cogiéndose a Ibope.`
+    : `${conf.length} round${conf.length>1?'s':''} peleados.`;
   const maxPrevio = conf.length>1 ? Math.max(...conf.slice(1).map(e=>e.rating)) : null;
   const esRecord = ultima && maxPrevio!=null && ultima.rating > maxPrevio;
   const rivalQueGano = em => (em.competencia||[]).filter(c=>c.rating!=null && c.rating>=em.rating).sort((a,b)=>b.rating-a.rating)[0];
@@ -365,28 +386,29 @@
 
   if (now < estreno){
     hero.innerHTML = `
-      <p class="kicker">${ico('i-tv')} Estreno</p>
+      <p class="kicker">${ico('i-tv')} Round 1 · Estreno</p>
       <h1 id="heroTitle" class="display">Domingo 22 hs.<span class="thin">${fechaLarga(isoDate(estreno))}</span></h1>
-      <p class="lead">Después de cada emisión, acá vas a ver cuánto midió según IBOPE y si le ganó a los demás canales de aire. El primer veredicto llega el lunes.</p>
+      <p class="lead">El domingo a las 22 se prende la caja. El lunes sabemos si funcionó: cuánto midió según IBOPE y si le ganó a los canales de aire.</p>
       <div class="count" id="count" role="timer" aria-live="off"></div>
       <div class="btns">${rtrBtn}</div>`;
     tick(estreno);
   } else if (pendiente){
     const f = isoDate(ultimaProg);
     hero.innerHTML = `
-      <p class="kicker">${ico(alAire?'i-tv':'i-clock')} ${alAire?'Ahora al aire':'Emisión del '+fechaLarga(f)}</p>
-      <h1 id="heroTitle" class="display">${alAire?'Está saliendo ahora':'Esperando a IBOPE'}<span class="thin">${alAire?'el rating lo sabemos mañana':'las planillas salen el lunes a la mañana'}</span></h1>
+      <p class="kicker">${ico(alAire?'i-tv':'i-clock')} ${alAire?'Round '+(conf.length+1)+' · en el ring':'Round '+(conf.length+1)+' · '+fechaLarga(f)}</p>
+      <h1 id="heroTitle" class="display">${alAire?'Está saliendo ahora':'Esperando el fallo'}<span class="thin">${alAire?'el rating lo sabemos mañana':'las planillas salen el lunes a la mañana'}</span></h1>
       <div class="static" aria-hidden="true"><canvas id="noise"></canvas><img src="assets/rebord.webp" alt=""><span class="lbl">${alAire?'En vivo':'Señal en espera'}</span></div>
       <div class="btns">${rtrBtn}${ultima?`<a class="btn btn-ghost" href="#main">${ico('i-list')}Emisiones anteriores</a>`:''}</div>`;
     noise();
-    document.title = (alAire?'Al aire':'Esperando a IBOPE') + ' · Dominbord';
+    if (!alAire){ $('#liveTxt').textContent='Esperando el fallo'; }
+    document.title = (alAire?'En el ring':'Esperando el fallo') + ' · Rebord contra Ibope';
     rotar(alAire
       ? ['el rating lo sabemos mañana','IBOPE está contando con los dedos','los people meters sudan','Telefe mira de reojo']
       : ['las planillas salen el lunes a la mañana','IBOPE está contando con los dedos','las planillas están en la impresora','los people meters sudan']);
   } else if (ultima){
     const v = veredicto(ultima);
     hero.innerHTML = `
-      <p class="kicker">${ico('i-tv')} Programa #${ultima.numero??conf.length} · ${fechaLarga(ultima.fecha)} ${ultima.estado==='provisorio'?'<span class="tag">provisorio</span>':''}</p>
+      <p class="kicker">${ico('i-tv')} Round ${ultima.numero??conf.length} · ${fechaLarga(ultima.fecha)} ${ultima.estado==='provisorio'?'<span class="tag">provisorio</span>':''}</p>
       <h1 id="heroTitle" class="display h1-sm">Rating según IBOPE</h1>
       ${v.cls==='win'?'<p class="stamp fade">Rebord se cogió a Ibope</p>':v.total>0?`<p class="stamp near fade">${esc(nombreRival(rivalQueGano(ultima)))} nos cogió a nosotros</p><p class="stamp-sub">Estamos cerca de cogernos a Ibope</p>`:''}
       ${(racha>=3||esRecord)?`<div class="badges">${racha>=3?`<span class="badge">${ico('i-check')}${racha} domingos seguidos cogiéndose a Ibope</span>`:''}${esRecord?`<span class="badge record">★ Nuevo récord</span>`:''}</div>`:''}
@@ -404,7 +426,7 @@
           : `Dominbord hizo ${fmt1(ultima.rating)} de rating según IBOPE.`)}">${ico('i-x-logo')}Compartir</a>
       </div>
       <p class="lead lead-sm">Próxima emisión: ${fechaLarga(isoDate(proximaProgramada()))} a las ${C.horario||'22:00'}.</p>`;
-    document.title = `${fmt1(ultima.rating)} · ${v.cls==='win'?'Se la cogió':v.total>0?'Casi':'Dominbord'} · Rating`;
+    document.title = `${fmt1(ultima.rating)} · ${v.cls==='win'?'Se la cogió':v.total>0?'Casi':'Round '+(ultima.numero??conf.length)} · Rebord contra Ibope`;
     if (esRecord) confetti(ultima.fecha);
   }
 
