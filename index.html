@@ -60,6 +60,10 @@
   ]
 }
 </script>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#070c1c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -383,7 +387,8 @@
   const esRecord = ultima && maxPrevio!=null && ultima.rating > maxPrevio;
   const rivalQueGano = em => (em.competencia||[]).filter(c=>c.rating!=null && c.rating>=em.rating).sort((a,b)=>b.rating-a.rating)[0];
   const nombreRival = c => c ? (c.programa || c.canal) : '';
-  const shareUrl = txt => `https://x.com/intent/post?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(location.origin+location.pathname)}`;
+  // ?r=N en la URL compartida: X cachea la tarjeta por URL, así cada round muestra su propia placa
+  const shareUrl = txt => `https://x.com/intent/post?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(location.origin+location.pathname+(ultima?'?r='+(ultima.numero??conf.length):''))}`;
   const ultimaProg = ultimaProgramada();
   const pendiente = ultimaProg && !E.some(e => e.fecha===isoDate(ultimaProg) && e.rating!=null);
   const hero = $('#hero');
