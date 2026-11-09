@@ -301,7 +301,7 @@
 <script>
 (function(){
   const qs = new URLSearchParams(location.search);
-  const DEMO = qs.get('demo') === '1';
+  const DEMO = ['1','2'].includes(qs.get('demo')); // ?demo=1 gana el último round, ?demo=2 lo pierde
   const FORCE = qs.get('estado'); // ?estado=aire | pendiente (solo para probar diseño)
   const D = window.DOMINGO_DATA || {config:{},emisiones:[]};
   const C = D.config;
@@ -316,7 +316,12 @@
       {numero:3,fecha:'2026-11-29',rating:8.1,youtube:'https://www.youtube.com/',estado:'confirmado',
        competencia:[{canal:'Telefe',programa:'Por el mundo',rating:7.5},{canal:'eltrece',programa:'Cine',rating:3.0},{canal:'elnueve',programa:'Cine',rating:1.3},{canal:'TV Pública',programa:'Fútbol',rating:0.7}]}
     ];
-    const b=document.createElement('div'); b.className='demo'; b.textContent='DATOS DE EJEMPLO (?demo=1)'; document.body.appendChild(b);
+    if (qs.get('demo')==='2'){
+      // último round perdido: MasterChef y el cine de eltrece lo superan, los otros dos no
+      E[2] = {numero:3,fecha:'2026-11-29',rating:2.9,youtube:'https://www.youtube.com/',estado:'confirmado',
+       competencia:[{canal:'Telefe',programa:'MasterChef Celebrity',rating:7.5},{canal:'eltrece',programa:'Cine',rating:3.0},{canal:'elnueve',programa:'Cine',rating:1.3},{canal:'TV Pública',programa:'Fútbol',rating:0.7}]};
+    }
+    const b=document.createElement('div'); b.className='demo'; b.textContent=`DATOS DE EJEMPLO (?demo=${qs.get('demo')})`; document.body.appendChild(b);
   }
 
   const $ = s => document.querySelector(s);

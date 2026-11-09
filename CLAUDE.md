@@ -13,7 +13,8 @@ Página estática (un solo `index.html`) que muestra el rating IBOPE de **Dominb
 python3 -m http.server 8080        # → http://localhost:8080
 
 # Estados de la página para probar diseño sin esperar la fecha
-#   ?demo=1            → 3 emisiones inventadas, fecha simulada 2026-12-01
+#   ?demo=1            → 3 emisiones inventadas, fecha simulada 2026-12-01 (último round ganado)
+#   ?demo=2            → igual, pero el último round lo pierde (sello de derrota)
 #   ?estado=aire       → simula programa al aire
 #   ?estado=pendiente  → simula "Esperando a IBOPE"
 
