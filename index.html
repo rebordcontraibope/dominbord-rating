@@ -415,7 +415,7 @@
     hero.innerHTML = `
       <p class="kicker">${ico('i-tv')} Round ${ultima.numero??conf.length} · ${fechaLarga(ultima.fecha)} ${ultima.estado==='provisorio'?'<span class="tag">provisorio</span>':''}</p>
       <h1 id="heroTitle" class="display h1-sm">Rating según IBOPE</h1>
-      ${v.cls==='win'?'<p class="stamp fade">Rebord se cogió a Ibope</p>':v.total>0?`<p class="stamp near fade">${esc(nombreRival(rivalQueGano(ultima)))} nos cogió a nosotros</p><p class="stamp-sub">Estamos cerca de cogernos a Ibope</p>`:''}
+      ${v.cls==='win'?'<p class="stamp fade">Rebord se cogió a Ibope</p>':v.total>0?`<p class="stamp near fade">${esc(nombreRival(rivalQueGano(ultima)))} nos cogió</p><p class="stamp-sub">Estamos cerca de cogernos a Ibope</p>`:''}
       ${(racha>=3||esRecord)?`<div class="badges">${racha>=3?`<span class="badge">${ico('i-check')}${racha} domingos seguidos cogiéndose a Ibope</span>`:''}${esRecord?`<span class="badge record">★ Nuevo récord</span>`:''}</div>`:''}
       <div class="ratingwrap fade">
         <div class="rating num" aria-label="${fmt1(ultima.rating)} puntos">${fmt1(ultima.rating)}<small>${fmtK(ultima.rating)}</small></div>
