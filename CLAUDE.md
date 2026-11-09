@@ -50,4 +50,6 @@ No hay tests ni linter.
 ## Git y deploy
 
 - Este repo se pushea SIEMPRE con la cuenta personal de GitHub **FedeRoma**, nunca con la cuenta de trabajo (`federicork-q`). Antes de cualquier push: `gh auth status` debe mostrar FedeRoma como cuenta activa (`gh auth switch -u FedeRoma` si no lo está). La identidad de commit está seteada a nivel local del repo (`git config user.name/user.email`), no global.
+- El repo vive en la organización **rebordcontraibope** (`rebordcontraibope/dominbord-rating`) para que el owner público no sea una cuenta personal. FedeRoma es admin con membresía privada.
+- Dominio: `rebordcontraibope.com` con Cloudflare adelante (proxy, SSL Full strict, redirect www→raíz, headers de GitHub removidos). El `CNAME` lo commitea GitHub solo si se toca el dominio por API: `git pull --rebase` antes de pushear.
 - Hosting: GitHub Pages desde la rama `main`, raíz del repo. El workflow de los lunes commitea `data/emisiones.js` y Pages republica solo con cada push.
