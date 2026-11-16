@@ -111,7 +111,7 @@ def componer(em: dict, destino: Path) -> None:
             "-annotate", f"+{x_puntos}+212", "puntos de rating",
             "-annotate", f"+{x_puntos}+242", "según IBOPE" + (" (provisorio)" if provisorio else "")]
     # veredicto
-    y = 310
+    y = 330  # debajo del descendente de la coma del rating (en ImageMagick 6 llega a ~320)
     for linea in v["lineas"]:
         cmd += ["-font", str(FONT_DISPLAY), "-fill", CREMA, "-pointsize", "46", "-annotate", f"+560+{y}", linea]
         y += 52
