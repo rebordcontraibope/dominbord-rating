@@ -439,6 +439,12 @@ def programa_en_franja(progs: list[tuple[int, int, str]], ini: int, fin: int) ->
 
 def correr_grilla(d: dict, fecha: dt.date, args) -> None:
     cfg = d["config"]
+    # TeleRed solo devuelve la grilla de HOY: si la corrida se atrasó (GitHub demora los schedule)
+    # o se pidió otra fecha, anotaríamos la programación de otro día como rival de la emisión.
+    dia_emision = dt.datetime.fromisoformat(cfg["estreno"]).weekday()
+    if fecha != hoy_ar() or fecha.weekday() != dia_emision:
+        sys.exit(f"La grilla solo se puede leer el mismo día de la emisión (hoy es {hoy_ar()}, pedido {fecha}). "
+                 "No anoto nada: las corridas de rating usarán los nombres fijos de config.competencia.")
     hh, mm = (cfg.get("horario") or "22:00").split(":")
     ini = int(hh) * 60 + int(mm)
     fin = ini + int(cfg.get("duracion_min") or 90)
