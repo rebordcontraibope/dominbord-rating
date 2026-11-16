@@ -42,7 +42,7 @@ No hay tests ni linter.
 
 **Placa para compartir:** `scripts/generar_placa.py` (ImageMagick + fuentes de `assets/fonts/`) dibuja `assets/placas/round-N.jpg` del último round con rating y reescribe `og:image`/`twitter:image`/`og:image:alt`/`primaryImageOfPage` en `index.html` con regex sobre esas metas: si las renombrás, el script aborta. El workflow lo corre después del scraper y commitea la placa junto con el HTML. El botón de compartir agrega `?r=N` a la URL para que X no reutilice la tarjeta cacheada del round anterior. Sin rounds con dato, queda `assets/og.jpg` (placa genérica).
 
-**Workflow:** seis crons en UTC (Argentina = UTC-3): domingo 22:30 (`--grilla`, se elige por `github.event.schedule`, no por hora, porque GitHub atrasa los schedule), lunes 00:30, 07, 09, 12 y 16, martes 11. `workflow_dispatch` acepta `fecha`, `x_post`, `youtube` y `solo_probar` (dry-run, no commitea). Probar con `gh workflow run actualizar.yml -f fecha=YYYY-MM-DD -f solo_probar=true` y leer con `gh run view <id> --log`. El script es idempotente: sin cambios no escribe ni commitea.
+**Workflow:** siete crons (horas en Argentina; en el yml están en UTC = ARG+3): domingo 22:30 (`--grilla`, se elige por `github.event.schedule`, no por hora, porque GitHub atrasa los schedule), lunes 00:30, 07, 09, 12 y 16, martes 11. `workflow_dispatch` acepta `fecha`, `x_post`, `youtube` y `solo_probar` (dry-run, no commitea). Probar con `gh workflow run actualizar.yml -f fecha=YYYY-MM-DD -f solo_probar=true` y leer con `gh run view <id> --log`. El script es idempotente: sin cambios no escribe ni commitea.
 
 ## Convenciones
 
