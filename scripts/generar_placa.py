@@ -41,6 +41,13 @@ def magick() -> list[str]:
     sys.exit("Falta ImageMagick (magick/convert).")
 
 
+def ancho_texto(texto: str, fuente: Path, pt: int) -> int:
+    """Ancho real en px del texto renderizado (Anton varía mucho por glifo: '0' y '8' son anchos)."""
+    r = subprocess.run(magick() + ["-font", str(fuente), "-pointsize", str(pt), f"label:{texto}", "-format", "%w", "info:"],
+                       check=True, capture_output=True, text=True)
+    return int(r.stdout.strip())
+
+
 def fmt1(n) -> str:
     return "–" if n is None else f"{n:.1f}".replace(".", ",")
 
@@ -99,10 +106,10 @@ def componer(em: dict, destino: Path) -> None:
     cmd += ["-font", str(FONT_BODY), "-fill", DORADO, "-pointsize", "26", "-annotate", "+562+70", kicker]
     # rating grande + "puntos" al lado
     cmd += ["-font", str(FONT_DISPLAY), "-fill", DORADO, "-pointsize", "190", "-annotate", "+556+95", fmt1(em["rating"])]
-    ancho_rating = 68 * len(fmt1(em["rating"]))  # Anton es angosta; alcanza para ubicar el texto de al lado
+    x_puntos = 556 + ancho_texto(fmt1(em["rating"]), FONT_DISPLAY, 190) + 16
     cmd += ["-font", str(FONT_BODY), "-fill", GRIS, "-pointsize", "24",
-            "-annotate", f"+{566 + ancho_rating}+212", "puntos de rating",
-            "-annotate", f"+{566 + ancho_rating}+242", "según IBOPE" + (" (provisorio)" if provisorio else "")]
+            "-annotate", f"+{x_puntos}+212", "puntos de rating",
+            "-annotate", f"+{x_puntos}+242", "según IBOPE" + (" (provisorio)" if provisorio else "")]
     # veredicto
     y = 310
     for linea in v["lineas"]:
