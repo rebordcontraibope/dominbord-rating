@@ -212,7 +212,8 @@ def imprimir_planilla(fid: str, planilla: Planilla) -> None:
 # Cada función recibe (fuente, fecha, cfg, args) y devuelve una Planilla
 # {canal: [(programa, rating), ...]} o None si no hay datos.
 
-RE_CANAL = re.compile(r"^(?:los\s+)?(?:cinco|5|diez|10)?\s*m[aá]s\s+vistos?\s+(?:de\s+)?(.+)$", re.I)
+# "Los cinco más vistos de Telefe" en una línea, o "Los cinco más vistos" con el canal en la línea siguiente
+RE_CANAL = re.compile(r"^(?:los\s+)?(?:cinco|5|diez|10)?\s*m[aá]s\s+vistos?(?:\s+(?:de\s+)?(.+))?$", re.I)
 
 
 def obtener_planilla_television(f: dict, fecha: dt.date, cfg: dict, args) -> Planilla | None:
@@ -230,15 +231,19 @@ def obtener_planilla_television(f: dict, fecha: dt.date, cfg: dict, args) -> Pla
     print(f"  [{f['id']}] nota: {url}")
     lineas = html_a_lineas(fetch(url))
     planilla: Planilla = {}
-    bloque, actual = [], None
+    bloque, actual, canal_en_siguiente = [], None, False
     for l in lineas + ["Fuente: fin"]:
+        if canal_en_siguiente:
+            actual, canal_en_siguiente = canal_norm(l), False
+            continue
         m = RE_CANAL.match(l)
         if m or l.lower().startswith("fuente"):
             if actual and bloque:
                 items = parsear_items(bloque)
                 if items:
                     planilla[actual] = items
-            actual = canal_norm(m.group(1)) if m else None
+            actual = canal_norm(m.group(1)) if m and m.group(1) else None
+            canal_en_siguiente = bool(m and not m.group(1))
             bloque = []
             continue
         if actual:

@@ -17,11 +17,60 @@ window.DOMINGO_DATA = {
     "fuente_planillas": "https://television.com.ar/noticias/?categoria=ratings",
     "punto_en_personas": 110000,
     "competencia": [
-      { "canal": "Telefe",     "programa": "MasterChef Celebrity", "hashtag": "MasterChefCelebrity" },
-      { "canal": "eltrece",    "programa": "", "hashtag": "" },
-      { "canal": "elnueve",    "programa": "Fútbol sin manchas", "hashtag": "FutbolSinManchas" },
-      { "canal": "TV Pública", "programa": "Hay música siempre", "hashtag": "HayMusicaSiempre" }
+      {
+        "canal": "Telefe",
+        "programa": "MasterChef Celebrity",
+        "hashtag": "MasterChefCelebrity"
+      },
+      {
+        "canal": "eltrece",
+        "programa": "",
+        "hashtag": ""
+      },
+      {
+        "canal": "elnueve",
+        "programa": "Fútbol sin manchas",
+        "hashtag": "FutbolSinManchas"
+      },
+      {
+        "canal": "TV Pública",
+        "programa": "Hay música siempre",
+        "hashtag": "HayMusicaSiempre"
+      }
     ]
   },
-  "emisiones": []
+  "emisiones": [
+    {
+      "numero": 1,
+      "fecha": "2026-11-15",
+      "rating": 0.8,
+      "youtube": "",
+      "estado": "provisorio",
+      "fuentes": [
+        "television.com.ar"
+      ],
+      "competencia": [
+        {
+          "canal": "Telefe",
+          "programa": "MasterChef Celebrity",
+          "rating": 12.1
+        },
+        {
+          "canal": "eltrece",
+          "programa": "",
+          "rating": null
+        },
+        {
+          "canal": "elnueve",
+          "programa": "Fútbol sin manchas",
+          "rating": 0.5
+        },
+        {
+          "canal": "TV Pública",
+          "programa": "Hay música siempre",
+          "rating": 0.4
+        }
+      ]
+    }
+  ]
 };
