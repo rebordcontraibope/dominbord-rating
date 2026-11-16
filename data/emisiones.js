@@ -24,8 +24,8 @@ window.DOMINGO_DATA = {
       },
       {
         "canal": "eltrece",
-        "programa": "",
-        "hashtag": ""
+        "programa": "El mundo del espectáculo",
+        "hashtag": "ElMundoDelEspectaculo"
       },
       {
         "canal": "elnueve",
@@ -45,7 +45,7 @@ window.DOMINGO_DATA = {
       "fecha": "2026-11-15",
       "rating": 0.8,
       "youtube": "",
-      "estado": "provisorio",
+      "estado": "confirmado",
       "fuentes": [
         "television.com.ar"
       ],
@@ -57,8 +57,8 @@ window.DOMINGO_DATA = {
         },
         {
           "canal": "eltrece",
-          "programa": "",
-          "rating": null
+          "programa": "El mundo del espectáculo",
+          "rating": 2.4
         },
         {
           "canal": "elnueve",
