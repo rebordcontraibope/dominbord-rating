@@ -411,8 +411,16 @@
   const esRecord = ultima && maxPrevio!=null && ultima.rating > maxPrevio;
   const rivalQueGano = em => (em.competencia||[]).filter(c=>c.rating!=null && c.rating>=em.rating).sort((a,b)=>b.rating-a.rating)[0];
   const nombreRival = c => c ? (c.programa || c.canal) : '';
-  // ?r=N en la URL compartida: X cachea la tarjeta por URL, así cada round muestra su propia placa
-  const shareUrl = txt => `https://x.com/intent/post?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(location.origin+location.pathname+(ultima?'?r='+(ultima.numero??conf.length):''))}`;
+  // ?r=N-hash en la URL compartida: X cachea la tarjeta por URL durante días. El número separa rounds y
+  // el hash (de lo que dibuja la placa: rating, estado, rivales) separa versiones del mismo round,
+  // p. ej. cuando pasa de provisorio a confirmado.
+  const versionPlaca = e => {
+    const s = JSON.stringify([e.rating, e.estado, (e.competencia||[]).map(c=>[c.canal, c.programa, c.rating])]);
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h.toString(36).slice(-4);
+  };
+  const shareUrl = txt => `https://x.com/intent/post?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(location.origin+location.pathname+(ultima?'?r='+(ultima.numero??conf.length)+'-'+versionPlaca(ultima):''))}`;
   const ultimaProg = ultimaProgramada();
   const pendiente = ultimaProg && !E.some(e => e.fecha===isoDate(ultimaProg) && e.rating!=null);
   const hero = $('#hero');
