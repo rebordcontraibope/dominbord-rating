@@ -71,6 +71,38 @@ window.DOMINGO_DATA = {
           "rating": 0.4
         }
       ]
+    },
+    {
+      "numero": 2,
+      "fecha": "2026-11-22",
+      "rating": 0.7,
+      "youtube": "",
+      "estado": "provisorio",
+      "fuentes": [
+        "television.com.ar"
+      ],
+      "competencia": [
+        {
+          "canal": "Telefe",
+          "programa": "MasterChef Celebrity",
+          "rating": 10.9
+        },
+        {
+          "canal": "eltrece",
+          "programa": "El mundo del espectáculo",
+          "rating": 1.8
+        },
+        {
+          "canal": "elnueve",
+          "programa": "Fútbol sin manchas",
+          "rating": null
+        },
+        {
+          "canal": "TV Pública",
+          "programa": "Hay música siempre",
+          "rating": 0.4
+        }
+      ]
     }
   ]
 };
