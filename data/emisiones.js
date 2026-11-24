@@ -79,7 +79,7 @@ window.DOMINGO_DATA = {
       "youtube": "",
       "estado": "provisorio",
       "fuentes": [
-        "television.com.ar"
+        "poneleshow"
       ],
       "competencia": [
         {
